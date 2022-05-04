@@ -1,0 +1,97 @@
+namespace buffers;
+
+struct PositionBuffer {
+    x: float;
+    y: float;
+    rotation: float;
+}
+
+struct StatsBuffer {
+    xp: ushort;
+    level: ubyte;
+    health: ushort;
+    hurtFlag: bool;
+    spawnProtected: bool;
+}
+
+table PlayerBuffer {
+    id: int;
+    position: PositionBuffer;
+    stats: StatsBuffer;
+    name: string;
+}
+
+//for leaderboard
+table PlayerInfo {
+    name: string;
+    rank: short;
+    score: int = 0;
+}
+
+table GasCanBuffer {
+    position: PositionBuffer;
+    id: int;
+}
+
+table RepairKitBuffer {
+    position: PositionBuffer;
+    id: int;
+}
+
+table LaunchpadBuffer {
+    id: int;
+    position: PositionBuffer;
+}
+
+table WreckageBuffer {
+    id: int;
+    position: PositionBuffer;
+}
+
+union EntityUnion { PlayerBuffer, GasCanBuffer, WreckageBuffer, LaunchpadBuffer, RepairKitBuffer }
+
+table EntityBuffer {
+    entity: EntityUnion;
+}
+
+//message types
+table InputPacketBuffer {
+    laneChange: byte;
+    slow: bool;
+}
+
+table JoinDataBuffer {
+    name: string;
+    googleToken: string;
+}
+
+table InfoBuffer {
+    msg: string;
+}
+
+table DeathBuffer {
+    //populate with any wanted info
+    score: int;
+    level: int;
+}
+
+table SnapshotBuffer {
+    entities: [EntityBuffer];
+    player: PlayerBuffer;
+    leaderboard: [PlayerInfo];
+    myInfo: PlayerInfo;
+    gasLevel: float;
+    serverTimeMs: long;
+}
+
+table ServerDataBuffer {
+    playerCount: ushort;
+}
+
+union MessageUnion { SnapshotBuffer, InputPacketBuffer, JoinDataBuffer, DeathBuffer, ServerDataBuffer, InfoBuffer }
+
+table MessageBuffer {
+    message: MessageUnion;
+}
+
+root_type MessageBuffer;
